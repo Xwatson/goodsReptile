@@ -1,0 +1,15 @@
+{
+  "name": "goods_reptile",
+  "version": "0.0.1",
+  "description": "商品价格抓取",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "xwatson",
+  "license": "ISC",
+  "dependencies": {
+    "@types/puppeteer": "^1.9.1",
+    "puppeteer": "^1.10.0"
+  }
+}
