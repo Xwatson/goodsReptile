@@ -12,26 +12,46 @@ const url = require('./config/url');
     });
     const page = await browser.newPage();
     await page.emulate(iPhone);
+    // 跳转tmall
     await page.goto(url.Tmall.XiaoMiTV4S50);
-    await page.waitFor(1000);
-   /*  const realPrice = await page.$eval('.price-real', e => e.textContent);
-    const noThrough = await page.$eval('.no-through', e=> e.textContent);
-    console.log({
-      realPrice,
-      noThrough
-    }) */
-    // Get the "viewport" of the page, as reported by the page.
-    const dimensions = await page.evaluate(() => {
+    await page.waitFor(300);
+    const tmallPrice = await page.evaluate(() => {
       const realPrice = document.querySelector('.price-real').innerText;
       const noThrough = document.querySelector('.no-through').innerText;
       return {
         realPrice,
-        noThrough,
-        deviceScaleFactor: window.devicePixelRatio
+        noThrough
+      };
+    });
+    // 跳转jd
+    await page.goto(url.JD.XiaoMiTV4S50);
+    await page.waitFor(300);
+    const jdPrice = await page.evaluate(() => {
+      const realPrice = document.querySelector('.price').innerText;
+      return {
+        realPrice
+      };
+    });
+    // 跳转苏宁
+    await page.goto(url.SuNing.XiaoMiTV4S50);
+    await page.waitFor(300);
+    const snPrice = await page.evaluate(() => {
+      const priceNow = document.querySelector('#pricemain .price-now').innerText;
+      const productPrice = document.querySelectorAll('.price-now');
+      const priceAll = [];
+      for (const key in productPrice) {
+        priceAll.push(productPrice[key].innerText);
+      }
+      return {
+        priceNow,
+        priceAll
       };
     });
   
-    console.log('Dimensions:', dimensions);
+    console.log('天猫价格：', tmallPrice);
+    console.log('京东价格：', jdPrice);
+    console.log('苏宁价格：', snPrice);
   
-    // await browser.close();
+    await page.waitFor(3000);
+    await browser.close();
   })();
