@@ -10,16 +10,27 @@ class UpdatePrice extends Subscription {
   // 通过 schedule 属性来设置定时任务的执行间隔等配置
   static get schedule() {
     return {
-      interval: '1m', // 1 分钟间隔
-      type: 'all', // 指定所有的 worker 都需要执行
+      interval: '1s',
+      type: 'worker',
+      disable: true // 不被自动启动，设置了在app.beforeStart中启动一次
     };
   }
 
   // subscribe 是真正定时任务执行时被运行的函数
   async subscribe() {
+    const interval = Math.random() * 5000 + 5000;
+    console.log('下次启动时间: ', interval + 'ms');
+    setTimeout(async() => {
+      await this.startSearch();
+      this.subscribe()
+    }, interval);
+  }
+  // 启动查询
+  async startSearch() {
+    console.log('启动chromium，ctx: ', this.ctx);
     const browser = await puppeteer.launch({
-        executablePath: path.resolve(__dirname, '../../chromium/chrome-win/chrome.exe'),
-        headless: false
+      executablePath: path.resolve(__dirname, '../../chromium/chrome-win/chrome.exe'),
+      headless: false
     });
     try {
       const resultList = await Promise.all([
